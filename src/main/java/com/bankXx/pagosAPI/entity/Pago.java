@@ -1,0 +1,24 @@
+package com.bankXx.pagosAPI.entity;
+
+
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Data;
+
+@Entity
+@Data
+public class Pago {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String concepto;
+    private int cantidad;
+    private String quienRealizaPago;
+    private String beneficiario;
+    private double monto;
+    private String estatus;
+}
