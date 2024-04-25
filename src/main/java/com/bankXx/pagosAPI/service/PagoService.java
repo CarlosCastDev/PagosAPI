@@ -15,12 +15,13 @@ public class PagoService {
 
     private final PagoRepository pagoRepository;
     
-    @Autowired
+    
     private AmqpTemplate rabbitTemplate;
 
     @Autowired
-    public PagoService(PagoRepository pagoRepository) {
+    public PagoService(PagoRepository pagoRepository, AmqpTemplate rabbitTemplate) {
         this.pagoRepository = pagoRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public Pago crearPago(Pago pago) {
