@@ -9,9 +9,9 @@
 		<version>3.2.5</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.bankXx</groupId>
+	<groupId>com.bankXxxx</groupId>
 	<artifactId>pagosAPI</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<name>pagosAPI</name>
 	<description>Demo pagosAPI</description>
 	<properties>
