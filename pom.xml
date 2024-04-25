@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.bankXx</groupId>
 	<artifactId>pagosAPI</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>pagosAPI</name>
 	<description>Demo pagosAPI</description>
 	<properties>
@@ -96,5 +96,14 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<distributionManagement>
+	    <repository>
+	        <id>github</id>
+	        <name>GitHub Packages</name>
+	        <url>https://maven.pkg.github.com/CarlosCastDev/PagosAPI</url>
+	    </repository>
+	</distributionManagement>
+
 
 </project>
