@@ -59,6 +59,7 @@ class PagoServiceTest {
         Pago pago = new Pago();
         pago.setEstatus("PENDIENTE");
         when(pagoRepository.findById(id)).thenReturn(java.util.Optional.ofNullable(pago));
+        when(pagoRepository.saveAndFlush(pago)).thenReturn(pago);
 
 
         String result = pagoService.cambiarEstatusPago(id, "PAGADO");

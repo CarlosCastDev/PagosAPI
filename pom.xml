@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.bankXxxx</groupId>
 	<artifactId>pagosAPI</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.7-SNAPSHOT</version>
 	<name>pagosAPI</name>
 	<description>Demo pagosAPI</description>
 	<properties>
