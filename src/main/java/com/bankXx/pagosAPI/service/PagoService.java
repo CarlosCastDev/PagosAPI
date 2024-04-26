@@ -39,19 +39,33 @@ public class PagoService {
     }
 
     public String cambiarEstatusPago(Long id, String nuevoEstatus) {
-        Pago pago = pagoRepository.findById(id).orElse(null);
-        if (pago != null) {
-            pago.setEstatus(nuevoEstatus);
-            pagoRepository.save(pago);
-            
-            String mensaje = "El estatus del pago con ID " + pago.getId() + " ha cambiado a " + nuevoEstatus;
-            rabbitTemplate.convertAndSend("cambio-estatus-pago", mensaje);
-            log.info("Notificación de cambio de estatus enviada a RabbitMQ: " + mensaje);
-            
-            return "Estatus del pago actualizado correctamente";
-        } else {
-            return "Pago no encontrado";
-        }
+		Pago pago = pagoRepository.findById(id).orElse(null);
+
+		if (pago != null) {
+			String estatusAnterior = pago.getEstatus();
+			pago.setEstatus(nuevoEstatus);
+			Pago pagoActualizado = pagoRepository.saveAndFlush(pago);
+
+			if (!estatusAnterior.equals(pagoActualizado.getEstatus())) {
+
+				String mensaje = new StringBuilder("El estatus del pago con ID ").append(pago.getId())
+						.append(" ha cambiado a ").append(nuevoEstatus).toString();
+				
+				rabbitTemplate.convertAndSend("cambio-estatus-pago", mensaje);
+				
+				log.info("********************************************");
+		    	log.info("********************************************");
+		    	log.info("********************************************");
+				log.info("Notificación de cambio de estatus ENVIADA a RabbitMQ: " + mensaje);
+				log.info("********************************************");
+		    	log.info("********************************************");
+		    	log.info("********************************************");
+			}
+
+			return "Estatus del pago actualizado correctamente";
+		} else {
+			return "Pago no encontrado";
+		}
     }
 }
 
