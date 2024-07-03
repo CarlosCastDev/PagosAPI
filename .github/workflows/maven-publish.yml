@@ -1,35 +1,93 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
-
-name: Maven Package
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
+        distribution: 'temurin' # Puedes usar 'adopt', 'zulu', 'corretto', etc.
         java-version: '17'
-        distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn clean package -DskipTests
+      working-directory: ./PagosAPI/  # Asegurarse de que el directorio de trabajo es correcto
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+    - name: Upload JAR as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: MedicChest
+        path: ./PagosAPI/target/*.jar
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Download JAR from build
+      uses: actions/download-artifact@v2
+      with:
+        name: MedicChest
+
+    - name: Verificar directorio actual y contenido
+      run: |
+        echo "Directorio actual: $(pwd)"
+        echo "Contenido del directorio actual:"
+        ls -l
+
+    - name: Obtener nombre del archivo JAR
+      id: get_jar_name
+      run: |
+        JAR_FILE=$(find . -name "PagosAPI-*.jar" -type f)
+        echo "Nombre del archivo JAR encontrado: $(basename $JAR_FILE)"
+        echo "JAR_FILE_NAME=$(basename $JAR_FILE)" >> $GITHUB_ENV
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+      with:
+        tag_name: v1.0.${{ github.run_number }}
+        release_name: Release v1.0.${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+    - name: Upload JAR to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/${{ env.JAR_FILE_NAME }}
+        asset_name: ${{ env.JAR_FILE_NAME }}
+        asset_content_type: application/java-archive
