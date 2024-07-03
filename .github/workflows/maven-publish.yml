@@ -32,7 +32,7 @@ jobs:
 
     - name: Build with Maven
       run: mvn clean package -DskipTests
-      working-directory: ./PagosAPI/  # Asegurarse de que el directorio de trabajo es correcto
+      working-directory: ./  # Asegurarse de que el directorio de trabajo es correcto
 
     - name: Upload JAR as artifact
       uses: actions/upload-artifact@v2
