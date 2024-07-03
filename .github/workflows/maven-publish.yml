@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: PagosAPI
-        path: ./PagosAPI/target/*.jar
+        path: ./target/*.jar
 
   release:
     needs: build
