@@ -67,7 +67,7 @@ jobs:
     - name: Obtener nombre del archivo JAR
       id: get_jar_name
       run: |
-        JAR_FILE=$(find . -name "PagosAPI-*.jar" -type f)
+        JAR_FILE=$(find . -name "pagosAPI-*.jar" -type f)
         echo "Nombre del archivo JAR encontrado: $(basename $JAR_FILE)"
         echo "JAR_FILE_NAME=$(basename $JAR_FILE)" >> $GITHUB_ENV
 
